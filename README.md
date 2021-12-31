@@ -53,6 +53,22 @@ Using the Arduino IDE.
     - Adafruit Feather HUZZAH ESP8266 uses "Adafruit Feather HUZZAH ESP8266".
 1. Build and upload using the Arduino IDE.
 
+Using PlatformIO (VSCode).
+
+Must build with CLI tools, create .env file and source it
+```sh
+export WIFI_SSID='\"<SSID>\"'
+export WIFI_PASSWORD='\"<PASS>\"'
+```
+
+The escaped quotes are important!
+
+Build
+```sh
+source .env
+pio run -e dht01
+```
+
 ## Version
 
 See `src/version.h`.
