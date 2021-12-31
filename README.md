@@ -61,12 +61,20 @@ export WIFI_SSID='\"<SSID>\"'
 export WIFI_PASSWORD='\"<PASS>\"'
 ```
 
+On Windows create `.env.ps1`
+```ps
+$env:WIFI_SSID='\"<SSID>\"'
+$env:WIFI_PASSWORD='\"<PASS>\"'
+```
+
 The escaped quotes are important!
 
 Build
 
 ```sh
 source .env
+# On windows use 
+. .env.ps1
 pio run -e dht01
 ```
 
