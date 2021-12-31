@@ -176,8 +176,8 @@ void handle_http_metrics() {
     if (isnan(humidity) || isnan(temperature) || isnan(heat_index)) {
         snprintf(response, BUFSIZE, up_template, VERSION, BOARD_NAME, DHT_NAME, 0);
     } else {
-        snprintf(response, BUFSIZE, up_template, VERSION, BOARD_NAME, DHT_NAME, 1);
-        snprintf(response, BUFSIZE, response_template, humidity, temperature, heat_index);
+        int cx = snprintf(response, BUFSIZE, up_template, VERSION, BOARD_NAME, DHT_NAME, 1);
+        snprintf(response+cx, BUFSIZE-cx, response_template, humidity, temperature, heat_index);
     }
     http_server.send(200, "text/plain; charset=utf-8", response);
 }
