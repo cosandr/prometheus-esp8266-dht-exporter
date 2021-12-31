@@ -64,9 +64,16 @@ export WIFI_PASSWORD='\"<PASS>\"'
 The escaped quotes are important!
 
 Build
+
 ```sh
 source .env
 pio run -e dht01
+```
+
+Upload (also builds)
+
+```sh
+pio run -e dht01 -t upload
 ```
 
 ## Version
