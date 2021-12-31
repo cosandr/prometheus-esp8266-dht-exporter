@@ -199,6 +199,11 @@ void read_sensors(boolean force) {
     read_humidity_sensor();
     read_temperature_sensor();
     read_heat_index();
+    #if DEBUG_MODE == 1
+    char msg[128];
+    snprintf(msg, 128, "T: %f, H: %f, HI: %f", temperature, humidity, heat_index);
+    log(msg, LogLevel::DEBUG);
+    #endif
 }
 
 void read_humidity_sensor() {
