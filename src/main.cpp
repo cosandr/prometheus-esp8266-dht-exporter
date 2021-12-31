@@ -150,11 +150,11 @@ void handle_http_root() {
 void handle_http_metrics() {
     log_request();
     static size_t const BUFSIZE = 1024;
+    static char const *up_template =
+        "# HELP " PROM_NAMESPACE "_up Metadata about the device.\n"
+        "# TYPE " PROM_NAMESPACE "_up gauge\n"
+        PROM_NAMESPACE "_up{version=\"%s\",board=\"%s\",sensor=\"%s\"} %d\n";
     static char const *response_template =
-        "# HELP " PROM_NAMESPACE "_info Metadata about the device.\n"
-        "# TYPE " PROM_NAMESPACE "_info gauge\n"
-        "# UNIT " PROM_NAMESPACE "_info \n"
-        PROM_NAMESPACE "_info{version=\"%s\",board=\"%s\",sensor=\"%s\"} 1\n"
         "# HELP " PROM_NAMESPACE "_air_humidity_percent Air humidity.\n"
         "# TYPE " PROM_NAMESPACE "_air_humidity_percent gauge\n"
         "# UNIT " PROM_NAMESPACE "_air_humidity_percent %%\n"
@@ -169,13 +169,13 @@ void handle_http_metrics() {
         PROM_NAMESPACE "_air_heat_index_celsius %f\n";
 
     read_sensors();
-    if (isnan(humidity) || isnan(temperature) || isnan(heat_index)) {
-        http_server.send(500, "text/plain; charset=utf-8", "Sensor error.");
-        return;
-    }
-
     char response[BUFSIZE];
-    snprintf(response, BUFSIZE, response_template, VERSION, BOARD_NAME, DHT_NAME, humidity, temperature, heat_index);
+    if (isnan(humidity) || isnan(temperature) || isnan(heat_index)) {
+        snprintf(response, BUFSIZE, up_template, VERSION, BOARD_NAME, DHT_NAME, 0);
+    } else {
+        snprintf(response, BUFSIZE, up_template, VERSION, BOARD_NAME, DHT_NAME, 1);
+        snprintf(response, BUFSIZE, response_template, humidity, temperature, heat_index);
+    }
     http_server.send(200, "text/plain; charset=utf-8", response);
 }
 
