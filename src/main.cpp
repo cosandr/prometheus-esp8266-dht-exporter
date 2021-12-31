@@ -187,6 +187,9 @@ void read_sensors() {
     read_humidity_sensor();
     read_temperature_sensor();
     read_heat_index();
+    char msg[128];
+    snprintf(msg, 128, "T: %f, H: %f, HI: %f", temperature, humidity, heat_index);
+    log(msg, LogLevel::DEBUG);
 }
 
 void read_humidity_sensor() {
