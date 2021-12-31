@@ -152,7 +152,7 @@ void handle_http_metrics() {
     static char const *up_template =
         "# HELP " PROM_NAMESPACE "_up Metadata about the device.\n"
         "# TYPE " PROM_NAMESPACE "_up gauge\n"
-        PROM_NAMESPACE "_up{version=\"%s\",board=\"%s\",sensor=\"%s\"} %d\n";
+        PROM_NAMESPACE "_up{version=\"%s\",board=\"%s\",sensor=\"%s\",mac=\"%s\"} %d\n";
     static char const *response_template =
         "# HELP " PROM_NAMESPACE "_air_humidity_percent Air humidity.\n"
         "# TYPE " PROM_NAMESPACE "_air_humidity_percent gauge\n"
@@ -170,9 +170,9 @@ void handle_http_metrics() {
     read_sensors();
     char response[BUFSIZE];
     if (isnan(humidity) || isnan(temperature) || isnan(heat_index)) {
-        snprintf(response, BUFSIZE, up_template, VERSION, BOARD_NAME, DHT_NAME, 0);
+        snprintf(response, BUFSIZE, up_template, VERSION, BOARD_NAME, DHT_NAME, WiFi.macAddress().c_str(), 0);
     } else {
-        int cx = snprintf(response, BUFSIZE, up_template, VERSION, BOARD_NAME, DHT_NAME, 1);
+        int cx = snprintf(response, BUFSIZE, up_template, VERSION, BOARD_NAME, DHT_NAME, WiFi.macAddress().c_str(), 1);
         snprintf(response+cx, BUFSIZE-cx, response_template, humidity, temperature, heat_index);
     }
     http_server.send(200, "text/plain; charset=utf-8", response);
