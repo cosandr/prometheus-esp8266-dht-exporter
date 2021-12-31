@@ -1,7 +1,9 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
-#include <DHTesp.h>
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <DHT_U.h>
 
 #include "config.h"
 #include "version.h"
@@ -19,24 +21,21 @@ void setup_wifi();
 void setup_http_server();
 void handle_http_home_client();
 void handle_http_metrics_client();
-void read_sensors(boolean force=false);
-bool read_sensor(float (*function)(), float *value);
+void read_sensors();
 void log(char const *message, LogLevel level=LogLevel::INFO);
 void handle_http_root();
 void handle_http_metrics();
 void handle_http_not_found();
 void log_request();
-void read_sensors(boolean force);
 void read_humidity_sensor();
 void read_temperature_sensor();
 void read_heat_index();
 void get_http_method_name(char *name, size_t name_length, HTTPMethod method);
 
-DHTesp dht_sensor;
+DHT dht(DHT_PIN, DHT_TYPE);
 ESP8266WebServer http_server(HTTP_SERVER_PORT);
 
 float humidity, temperature, heat_index;
-uint32_t previous_read_time = 0;
 
 void setup(void) {
     char message[128];
@@ -51,10 +50,7 @@ void setup(void) {
 
 void setup_dht_sensor() {
     log("Setting up DHT sensor");
-    dht_sensor.setup(DHT_PIN, DHTesp::DHT_TYPE);
-    delay(dht_sensor.getMinimumSamplingPeriod());
-    // Test read
-    read_sensors(true);
+    dht.begin();
     log("DHT sensor ready", LogLevel::DEBUG);
 }
 
@@ -187,15 +183,7 @@ void handle_http_not_found() {
     http_server.send(404, "text/plain; charset=utf-8", "Not found.");
 }
 
-void read_sensors(boolean force) {
-    uint32_t min_interval = max(dht_sensor.getMinimumSamplingPeriod(), READ_INTERVAL);
-    uint32_t current_time = millis();
-    if (!force && current_time - previous_read_time < min_interval) {
-        log("Sensors were recently read, will not read again yet.", LogLevel::DEBUG);
-        return;
-    }
-    previous_read_time = current_time;
-
+void read_sensors() {
     read_humidity_sensor();
     read_temperature_sensor();
     read_heat_index();
@@ -203,10 +191,8 @@ void read_sensors(boolean force) {
 
 void read_humidity_sensor() {
     log("Reading humidity sensor ...", LogLevel::DEBUG);
-    bool result = read_sensor([] {
-          return dht_sensor.getHumidity();
-      }, &humidity);
-    if (result) {
+    humidity = dht.readHumidity();
+    if (!isnan(humidity)) {
         humidity += HUMIDITY_CORRECTION_OFFSET;
     } else {
         log("Failed to read humidity sensor.", LogLevel::ERROR);
@@ -215,10 +201,8 @@ void read_humidity_sensor() {
 
 void read_temperature_sensor() {
     log("Reading temperature sensor ...", LogLevel::DEBUG);
-    bool result = read_sensor([] {
-        return dht_sensor.getTemperature();
-    }, &temperature);
-    if (result) {
+    temperature = dht.readTemperature();
+    if (!isnan(temperature)) {
         temperature += TEMPERATURE_CORRECTION_OFFSET;
     } else {
         log("Failed to read temperature sensor.", LogLevel::ERROR);
@@ -227,23 +211,10 @@ void read_temperature_sensor() {
 
 void read_heat_index() {
     if (!isnan(humidity) && !isnan(temperature)) {
-        heat_index = dht_sensor.computeHeatIndex(temperature, humidity, false);
+        heat_index = dht.computeHeatIndex(temperature, humidity, false);
     } else {
         heat_index = NAN;
     }
-}
-
-bool read_sensor(float (*function)(), float *value) {
-    bool success = false;
-    for (int i = 0; i < READ_TRY_COUNT; i++) {
-        *value = function();
-        if (!isnan(*value)) {
-            success = true;
-            break;
-        }
-        log("Failed to read sensor.", LogLevel::DEBUG);
-    }
-    return success;
 }
 
 void log_request() {

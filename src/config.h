@@ -14,10 +14,6 @@
 #define TEMPERATURE_CORRECTION_OFFSET 0
 // Humidity offset in percent
 #define HUMIDITY_CORRECTION_OFFSET 0
-// How long to cache the sensor results, in milliseconds
-#define READ_INTERVAL 5000
-// How many times to try to read the sensor before returning an error
-#define READ_TRY_COUNT 5
 // Wi-Fi SSID (required)
 // #define WIFI_SSID ""
 // Wi-Fi password (required)

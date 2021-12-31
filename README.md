@@ -8,7 +8,7 @@ An IoT Prometheus exporter for measuring temperature and humidity, using an ESP8
 
 | Metric | Description | Unit |
 | - | - | - |
-| `iot_info` | Metadata about the device. | |
+| `iot_up` | Metadata about the device. | |
 | `iot_air_humidity_percent` | Air humidity. | `%` |
 | `iot_air_temperature_celsius` | Air temperature. | `°C` |
 | `iot_air_heat_index_celsius` | Apparent air temperature, based on temperature and humidity. | `°C` |
@@ -30,9 +30,8 @@ An IoT Prometheus exporter for measuring temperature and humidity, using an ESP8
     - Download and install.
 - [esp8266 library for Arduino](https://github.com/esp8266/Arduino#installing-with-boards-manager)
     - See the instructions on the page.
-- [DHT sensor library for ESPx](https://github.com/beegee-tokyo/DHTesp)
+- [DHT sensor library](https://github.com/adafruit/DHT-sensor-library)
     - Install using the Arduino library manager.
-    - You can also try the Adafruit one, but that one didn't work for me.
 
 ## Building
 
@@ -43,15 +42,6 @@ Using the "Adafruit Feather HUZZAH ESP8266".
 Wire the DHT sensor power to the 3.3V and any GND on the ESP and wire the data output to e.g. pin 14 (aka D5).
 
 ### Software
-
-Using the Arduino IDE.
-
-1. Copy `config.default.h` to `config.h` and fill inn the details.
-1. Open `src/src.ino` in the Arduino IDE.
-1. Set the correct settings for the board.
-    - WEMOS D1 Mini uses board "WeMoS D1 R2 & mini".
-    - Adafruit Feather HUZZAH ESP8266 uses "Adafruit Feather HUZZAH ESP8266".
-1. Build and upload using the Arduino IDE.
 
 Using PlatformIO (VSCode).
 
