@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <DHTesp.h>
@@ -21,6 +22,15 @@ void handle_http_metrics_client();
 void read_sensors(boolean force=false);
 bool read_sensor(float (*function)(), float *value);
 void log(char const *message, LogLevel level=LogLevel::INFO);
+void handle_http_root();
+void handle_http_metrics();
+void handle_http_not_found();
+void log_request();
+void read_sensors(boolean force);
+void read_humidity_sensor();
+void read_temperature_sensor();
+void read_heat_index();
+void get_http_method_name(char *name, size_t name_length, HTTPMethod method);
 
 DHTesp dht_sensor;
 ESP8266WebServer http_server(HTTP_SERVER_PORT);
