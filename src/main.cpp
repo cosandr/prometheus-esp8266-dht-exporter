@@ -135,16 +135,19 @@ void loop(void) {
 
 void handle_http_root() {
     log_request();
-    static size_t const BUFSIZE = 256;
-    static char const *response_template =
-        "Prometheus ESP8266 DHT Exporter by HON95.\n"
-        "\n"
-        "Project: https://github.com/HON95/prometheus-esp8266-dht-exporter\n"
-        "\n"
-        "Usage: %s\n";
+    static size_t const BUFSIZE = 512;
+    static char const *response_template = "<html>\n"
+        "<head><title>ESP8266 DHT Exporter</title></head>\n"
+        "<body>\n"
+        "<h1>ESP8266 DHT Exporter</h1>\n"
+        "<p><a href=\"%s\">Metrics</a></p>\n"
+        "<h2>More information:</h2>\n"
+        "<p><a href=\"https://github.com/cosandr/prometheus-esp8266-dht-exporter\">github.com/cosandr/prometheus-esp8266-dht-exporter</a></p>\n"
+        "</body>"
+        "</html>";
     char response[BUFSIZE];
     snprintf(response, BUFSIZE, response_template, HTTP_METRICS_ENDPOINT);
-    http_server.send(200, "text/plain; charset=utf-8", response);
+    http_server.send(200, "text/html; charset=utf-8", response);
 }
 
 void handle_http_metrics() {
