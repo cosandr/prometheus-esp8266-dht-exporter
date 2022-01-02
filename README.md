@@ -57,17 +57,15 @@ Using PlatformIO (VSCode).
 
 Must build with CLI tools, create .env file and source it
 ```sh
-export WIFI_SSID='\"<SSID>\"'
-export WIFI_PASSWORD='\"<PASS>\"'
+export WIFI_SSID="<SSID>"
+export WIFI_PASSWORD="<PASS>"
 ```
 
 On Windows create `.env.ps1`
-```ps
-$env:WIFI_SSID='\"<SSID>\"'
-$env:WIFI_PASSWORD='\"<PASS>\"'
+```powershell
+$env:WIFI_SSID="<SSID>"
+$env:WIFI_PASSWORD="<PASS>"
 ```
-
-The escaped quotes are important!
 
 Build
 
